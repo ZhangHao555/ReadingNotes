@@ -47,7 +47,7 @@ adb bugreport bugreport.zip 导出记录
 6、上传 https://bathist.ef.lc/ 进行分析
 
 ![](https://github.com/ZhangHao555/ReadingNotes/blob/master/pics/historian1.png)
-![](https://github.com/ZhangHao555/ReadingNotes/blob/master/pics/historian2.png)
+![](https://github.com/ZhangHao555/ReadingNotes/blob/master/pics/historian21.png)
 ### 分析数据
 第一张图 以图表的形式给用户一种直观的感受。可以看出电量在什么阶段下降最快，进而分析出异常的情况。
 
