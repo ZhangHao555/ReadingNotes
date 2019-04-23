@@ -25,7 +25,7 @@
 
 幸好，google开源了一款电量分析工具Battery Historian，可视化电池信息。 用了之后我们看到的是这样。
 
-![image.png](https://upload-images.jianshu.io/upload_images/9243886-caf220b791fa9db8.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+![image.png](https://github.com/ZhangHao555/ReadingNotes/blob/master/pics/%E7%94%B5%E9%87%8F%E6%B6%88%E8%80%97%E5%9B%BE.png)
 
 #### 使用Battery Historian
 ##### 导出数据电池
@@ -46,16 +46,12 @@ adb bugreport bugreport.zip 导出记录
 5、adb bugreport bugreport.zip 导出
 6、上传 https://bathist.ef.lc/ 进行分析
 
-![](https://upload-images.jianshu.io/upload_images/9243886-51d60df59dd95a04.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
-
-![](https://upload-images.jianshu.io/upload_images/9243886-1b71f987d1e73ee6.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
-
-![](https://upload-images.jianshu.io/upload_images/9243886-3d0120c915527993.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
-
+![](https://github.com/ZhangHao555/ReadingNotes/blob/master/pics/historian1.png)
+![](https://github.com/ZhangHao555/ReadingNotes/blob/master/pics/historian2.png)
 ### 分析数据
 第一张图 以图表的形式给用户一种直观的感受。可以看出电量在什么阶段下降最快，进而分析出异常的情况。
 
-第二、三张图，左边可以选择app来查看app的使用情况。可以发现，在这一个小时里，
+第二张图，左边可以选择app来查看app的使用情况。可以发现，在这一个小时里，
 a、我们播放视频消耗了17.60%的电量。
 b、cpu一直处于唤醒状态
 c、wifi在22分钟内传输了236.68MB流量
@@ -83,8 +79,7 @@ c、wifi在22分钟内传输了236.68MB流量
 
 经过产品环境抓包发现，我们的请求似乎返回是没有经过压缩的。 
 GZIP现今已经成为Internet 上使用非常普遍的一种数据压缩格式。一般对纯文本内容可压缩到原大小的40％
-![image.png](https://upload-images.jianshu.io/upload_images/9243886-73cd0f45d624a4fc.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
-![image.png](https://upload-images.jianshu.io/upload_images/9243886-d1ea42af1b0bf602.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+![image.png](![](https://github.com/ZhangHao555/ReadingNotes/blob/master/pics/search_api.png))
 
 目前App内和server下发的图片基本都是png格式。但是对于JPEG、PNG、GIF等常用图片格式的优化已几乎达到极致，因此Google于2010年提出了一种新的图片压缩格式 — WebP，给图片的优化提供了新的可能。
 WebP为网络图片提供了无损和有损压缩能力，同时在有损条件下支持透明通道。据官方实验显示：无损WebP相比PNG减少26%大小；有损WebP在相同的SSIM（Structural Similarity Index，结构相似性）下相比JPEG减少25%~34%的大小；有损WebP也支持透明通道，大小通常约为对应PNG的1/3。
