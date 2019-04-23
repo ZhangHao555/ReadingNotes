@@ -49,12 +49,10 @@ adb bugreport bugreport.zip 导出记录
 ![](https://github.com/ZhangHao555/ReadingNotes/blob/master/pics/historian1.png)
 ![](https://github.com/ZhangHao555/ReadingNotes/blob/master/pics/historian21.png)
 ### 分析数据
-第一张图 以图表的形式给用户一种直观的感受。可以看出电量在什么阶段下降最快，进而分析出异常的情况。
-
-第二张图，左边可以选择app来查看app的使用情况。可以发现，在这一个小时里，
-a、我们播放视频消耗了17.60%的电量。
-b、cpu一直处于唤醒状态
-c、wifi在22分钟内传输了236.68MB流量
+a、找出电量下降最快的时间段，分析原因。（本例中电量下降速度平稳，没有异常）
+b、分析数据传输次数和传输流量是否符合预期。（本例wifi在22m27s内传输了236.68MB,认为没有异常）
+c、如果息屏，检查wakelock是否释放(本例中只使用了WindowManager 和 AudioMix两个wakelock 系统自己会释放  正常）
+d、是否使用了不需要的传感器(本例没有使用其他传感器 正常)
 
 ## GOOGLE的优化建议
 使用工具可以帮助我们快速定位异常的耗电情况。但是却不容易发现一些不太明显的多余耗电操作（网络多请求了一次，数据没有压缩等等）。所以，我们还应该借鉴经验，根据实际情况进行优化。
