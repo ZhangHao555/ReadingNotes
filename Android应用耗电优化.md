@@ -1,9 +1,12 @@
 ## 优化目标
 只要app在运行，肯定是会消耗电量的。所以在优化的时候，应该重点关注异常的耗电行为。
-经过资料查询
-异常耗电一般分为
+
+经过资料查询异常耗电一般分为
+
 	1、CPU异常（例如不正确的wakelock使用）
+	
 	2、网络异常（频繁的网路请求）。
+	
 	3、传感器异常（不需要使用GPS的功能，却监听了GPS）
 
 
@@ -40,18 +43,28 @@ adb bugreport bugreport.zip 导出记录
 
 ## 举例，对视频播放模块进行耗电优化。
 1、清除电量使用记录 adb shell dumpsys batterystats --reset
+
 2、获得应用程序的wakelock记录 adb shell dumpsys batterystats --enable full-wake-history
-3、播放三十分钟视频
+
+3、播放六十分钟视频
+
 4、adb shell dumpsys batterystats --disable full-wake-history  关闭应用程序的wakelock记录
+
 5、adb bugreport bugreport.zip 导出
+
 6、上传 https://bathist.ef.lc/ 进行分析
 
 ![](https://github.com/ZhangHao555/ReadingNotes/blob/master/pics/historian1.png)
+
 ![](https://github.com/ZhangHao555/ReadingNotes/blob/master/pics/historian21.png)
+
 ### 分析数据
 a、找出电量下降最快的时间段，分析原因。（本例中电量下降速度平稳，没有异常）
+
 b、分析数据传输次数和传输流量是否符合预期。（本例wifi在22m27s内传输了236.68MB,认为没有异常）
+
 c、如果息屏，检查wakelock是否释放(本例中只使用了WindowManager 和 AudioMix两个wakelock 系统自己会释放  正常）
+
 d、是否使用了不需要的传感器(本例没有使用其他传感器 正常)
 
 ## GOOGLE的优化建议
@@ -60,8 +73,9 @@ d、是否使用了不需要的传感器(本例没有使用其他传感器 正�
 对于优化电量，Google给了我们三个建议
 
 > There are three important things to keep in mind in keeping your app power-thrifty:
->1、Make your apps Lazy First.
-2、Take advantage of platform features that can help manage your app's battery consumption.
+
+>1、Make your apps Lazy First.  
+2、Take advantage of platform features that can help manage your app's battery consumption.  
 3、Use tools that can help you identify battery-draining culprits.
 
 我们可以根据这些建议来进行优化。
@@ -98,10 +112,13 @@ Can work be batched, instead of putting the device into an active state many tim
 这个主要是针对后台app的，操作系统已经帮我们做了优化。
 
 ### 2、Take advantage of platform features that can help manage your app's battery consumption.
-Android 5.0 为我们提供了 JobScheduler ，用于优化系统运行，提供资源利用率，节省电量。
-Android 6.0 新增Doze模式和App Standby模式   ： 
-Doze模式通过在设备长时间处于闲置状态时推迟应用的后台CPU和网络Activity来减少电池消耗
-App Standby 应用切换到后台，并长时间没有与用户交互时，系统便会进入App Standby模式，限制CPU和网络来减少电池消耗。
+Android 5.0 为我们提供了 JobScheduler ，用于优化系统运行，提供资源利用率，节省电量。 
+
+Android 6.0 新增Doze模式和App Standby模式   ：   
+
+Doze模式通过在设备长时间处于闲置状态时推迟应用的后台CPU和网络Activity来减少电池消耗  
+App Standby 应用切换到后台，并长时间没有与用户交互时，系统便会进入App Standby模式，限制CPU和网络来减少电池消耗。 
+
 Android 9.0 新增App Standby Buckets  系统根据用户使用行为使用机器学习算法来将应用放置在不同的Buckets里面。系统根据buckets的类型来限制应用行为。
 
 ![image.png](https://upload-images.jianshu.io/upload_images/9243886-4d762b27623a15c6.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
@@ -116,39 +133,20 @@ Android 9.0 新增App Standby Buckets  系统根据用户使用行为使用机�
 使用工具分析 ?[Battery Historian](https://github.com/google/battery-historian)
 
 ## 总结
-对电量优化的步骤：
-1、划分模块，在度量单位（n次或者n分钟）内进行耗电测量，记录耗电大小，dump出report文件。
-2、上传battery historian 分析{cpu、网络、息屏wakelock是否释放，传感器是否异常}
-3、代码层面分析，UI是否优化，网络请求是否可以缓存、压缩，内存是否可以优化
+对电量优化的步骤：  
+1、划分模块，在度量单位（n次或者n分钟）内进行耗电测量，记录耗电大小，dump出report文件。   
+2、上传battery  historian分析  {cpu、网络、息屏wakelock是否释放，传感器是否异常}  
+3、代码层面分析，UI是否优化，网络请求是否可以缓存、压缩，内存是否可以优化  
 4、下一次迭代的时候 如果对相应的模块有改动，则要重新测量，看看改动之后电量消耗是否增多。
 
 
 
-**总体来说，对于电量优化我们有两个事情要做**
+**总体来说，对于电量优化我们有两个事情要做**  
 1、分模块量化，排查异常耗电，解决异常耗电。
 
 2、写代码时要有意识的去测试UI、内存、CPU、网络等参数，养成良好的习惯
 
 **其实电量优化说到底，就是UI优化、内存优化、cpu优化、网络优化。**
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
