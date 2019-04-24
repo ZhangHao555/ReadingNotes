@@ -88,20 +88,28 @@ d、是否使用了不需要的传感器(本例没有使用其他传感器 正�
 
 对应到我们的项目中值得优化的点：
 #### a、减少： 
+**关于缓存**  
+根据业务情况，对于不太紧要的数据可以考虑实现懒加载。比如发现页的数据，因为用户可以手动去刷新，所以没有必要应用启动的时候每次都去请求服务器。
 
-经过产品环境抓包发现，我们的请求似乎返回是没有经过压缩的。 
+**关于压缩**
+
+经过产品环境抓包发现，我们的请求似乎返回是没有经过压缩的。  
 GZIP现今已经成为Internet 上使用非常普遍的一种数据压缩格式。一般对纯文本内容可压缩到原大小的40％
-![image.png](![](https://github.com/ZhangHao555/ReadingNotes/blob/master/pics/search_api.png))
 
-目前App内和server下发的图片基本都是png格式。但是对于JPEG、PNG、GIF等常用图片格式的优化已几乎达到极致，因此Google于2010年提出了一种新的图片压缩格式 — WebP，给图片的优化提供了新的可能。
+目前App内和server下发的图片基本都是png格式。但是对于JPEG、PNG、GIF等常用图片格式的优化已几乎达到极致，因此Google于2010年提出了一种新的图片压缩格式 — WebP，给图片的优化提供了新的可能。  
 WebP为网络图片提供了无损和有损压缩能力，同时在有损条件下支持透明通道。据官方实验显示：无损WebP相比PNG减少26%大小；有损WebP在相同的SSIM（Structural Similarity Index，结构相似性）下相比JPEG减少25%~34%的大小；有损WebP也支持透明通道，大小通常约为对应PNG的1/3。
 
+**关于轮询**  
 项目中的消息通知是采用轮询实现的，每隔一分钟去请求服务器获取最新消息。 我们可以集成第三方推送工具，来实现消息推送，避免频繁唤醒网络。
 
 #### b、推迟
-针对不太紧急的任务，我们可以推迟任务等到相应的情景再触发。例如，应用的更新。我们在用户进行充电，并且连接wifi的时候自动进行更新。 
+针对不太紧急的任务，我们可以推迟任务等到相应的情景再触发。  
+
+例如，应用的更新。我们在用户进行充电，并且连接wifi的时候自动进行更新。  
+例如，用户行为记录。目前的策略是每收集十条记录就上传服务器。频繁的上传必然会导致电量消耗，我们就可以将上传的操作推迟到用户充电并连接wifi时。
+
 Android 从5.0开始 提供了JobScheduler，我们可以使用它在特定情况下例如充电状态，wifi连接状态执行任务。
-这是JobScheduler支持的触发条件。
+这些是JobScheduler支持的触发条件。
 
 ![image.png](https://upload-images.jianshu.io/upload_images/9243886-637b9d946f8f7e07.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
 
@@ -109,7 +117,11 @@ Android 从5.0开始 提供了JobScheduler，我们可以使用它在特定情�
 
 #### c、合并
 Can work be batched, instead of putting the device into an active state many times? For example, is it really necessary for several dozen apps to each turn on the radio at separate times to send their messages? Can the messages instead be transmitted during a single awakening of the radio?
-这个主要是针对后台app的，操作系统已经帮我们做了优化。
+
+将操作合并一次做完。因为不使用手机的时候，cpu和网络模块是会休眠的。而唤醒cpu和网络的瞬间是耗电最大的时刻，所以频繁的唤醒cpu和网络模块会导致耗电激增。对于不太紧急的任务，我们可以考虑。  
+例如行为采集，可以存入数据库，等待合适的时候一次性上传。
+Android系统关于这一点也做了很多优化（Doze和App Standby模式）。
+
 
 ### 2、Take advantage of platform features that can help manage your app's battery consumption.
 Android 5.0 为我们提供了 JobScheduler ，用于优化系统运行，提供资源利用率，节省电量。 
