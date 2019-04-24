@@ -18,7 +18,7 @@
  Android 在4.1版本后在系统增加了battry info模块，记录一定时间周期内整机的功耗状态以及每个应用的功耗详情。
 ### 如何衡量应用耗电
 怎么去衡量一个应用耗电多少？肯定是运行应用一段时间，然后计算电量消耗。但是，一个应用通常都有许多模块，如果要全局的计算一个应用耗电，会很麻烦，也不方便测试。所以，我们应该以应用的模块为单位，在一定时间内反复使用该模块，然后得出电量消耗。比如，要测试视频播放的电量消耗。我们可以播放视频一小时，然后通过battry info查看电量消耗。  **所以我们最终的衡量标准，应该是以模块为标准，分别衡量**。
-![耗电记录表.png](https://upload-images.jianshu.io/upload_images/9243886-eb3ddf6deee8ae50.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+![耗电记录表.png](https://github.com/ZhangHao555/ReadingNotes/blob/master/pics/table.png)
 
 ## 工具使用介绍
 获取系统耗电量。android4.1后增加了电池信息，所以我们只要dump下来就可以了。
