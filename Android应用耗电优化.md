@@ -94,6 +94,8 @@ d、是否使用了不需要的传感器(本例没有使用其他传感器 正�
 **关于压缩**
 
 经过产品环境抓包发现，我们的请求似乎返回是没有经过压缩的。  
+![](https://github.com/ZhangHao555/ReadingNotes/blob/master/pics/search_api.png)
+
 GZIP现今已经成为Internet 上使用非常普遍的一种数据压缩格式。一般对纯文本内容可压缩到原大小的40％
 
 目前App内和server下发的图片基本都是png格式。但是对于JPEG、PNG、GIF等常用图片格式的优化已几乎达到极致，因此Google于2010年提出了一种新的图片压缩格式 — WebP，给图片的优化提供了新的可能。  
