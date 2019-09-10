@@ -1,0 +1,149 @@
+# 课程讨论
+
+## 一、功能描述
+ 课程讨论模块的主要功能是向成教用户提供的一个用于提问，答疑，学习交流的平台。学生可以发布帖子寻求帮助，老师或者同学可以回帖帮助同学解决问题。
+
+**用例图**
+
+![](https://user-gold-cdn.xitu.io/2019/9/10/16d18adbed59c9fe?w=891&h=499&f=png&s=42485)
+
+**类图**
+
+![](https://user-gold-cdn.xitu.io/2019/9/10/16d18b00936f347b?w=1026&h=534&f=png&s=47655)
+
+## 二、功能界面
+
+**课程讨论列表 TopicListActivity**
+![](https://user-gold-cdn.xitu.io/2019/9/9/16d1491268d06c28?w=367&h=733&f=png&s=141551)
+
+**提问页面 PostActivity**
+![](https://user-gold-cdn.xitu.io/2019/9/9/16d1491cc50a05dc?w=468&h=961&f=png&s=49342)
+
+**问答详情 TopicDetailActivity**
+![](https://user-gold-cdn.xitu.io/2019/9/9/16d149279f7ec4b4?w=465&h=961&f=png&s=116604)
+
+**评论回复 CommentsActivity**
+![](https://user-gold-cdn.xitu.io/2019/9/9/16d1493eef80cda6?w=337&h=694&f=png&s=47217)
+
+## 三、页面详解
+
+### 1、课程讨论列表 TopicListActivity
+课程讨论列表功能很简单，就是调用ForumSearch接口展示数据，并添加相应的点击事件。TopicListActivity 继承了BasicListActivity。  
+BasicListActivity 是一个专门用于展示列表类型的封装Activity，写好了刷新，加载更多的逻辑。所以子类只需要提供请求数据的和展示UI的逻辑即可。
+
+**BasicListActivity 初始化**
+
+![](https://user-gold-cdn.xitu.io/2019/9/9/16d14a9466eeb314?w=559&h=522&f=png&s=30229)
+
+**刷新**
+
+![](https://user-gold-cdn.xitu.io/2019/9/9/16d14aeefc1a2539?w=432&h=528&f=png&s=21511)
+
+
+### 2、提问页面 PostActivity
+简单的ListActivity,主要说下获取图片上传的逻辑。
+![](https://user-gold-cdn.xitu.io/2019/9/9/16d15b94090453b2?w=537&h=481&f=png&s=27185)
+
+#### 可以优化的点：
+1、``` private ArrayList<HashMap<String, Object>> imageItem;``` 可以将list改为LinkedHashSet 避免重复上传相同的图片  
+2、``` Bitmap bitmap = UploadImgManager.revitionImageSize(fileName, 500 * 1024);```图片压缩存在内存浪费。 ImageView的宽高都为60dp,可以使用更准确的宽高替换500 * 1024，或者使用glide进行加载，glide会根据view的宽高自动压缩bitmap
+
+### 3、问答详情 TopicDetailActivity
+继承了BasicListActivity,主要讲下数据的处理。
+**Replies**
+```
+ public static class Replies implements Serializable {
+        private Integer id;
+        private Integer parentId;
+        private Integer parentType;  //1:post 2:reply
+        private String title;
+        private String content;
+        private Boolean digest;
+        private Boolean bad;
+        private Integer authorId;
+        private String authorName;
+        private String photoPath;
+        private Long createdTime;
+        private Integer agreeNum;
+        private Boolean alreadyAgreed;
+        private boolean isTopic;
+ }
+```
+
+
+![](https://user-gold-cdn.xitu.io/2019/9/9/16d16329cf6ac6fc?w=1120&h=647&f=png&s=64491)
+
+1、接口返回List\<Replies\> ，TopicDetailActivity需要展示parentId == topicId 并且parentType == post的数据
+2、initCommentsMap 是辅组map，帮组快速获取子结点。
+
+### 4、评论回复 CommentsActivity 
+继承了BasicListActivity,主要讲下数据的处理。
+![](https://user-gold-cdn.xitu.io/2019/9/9/16d165b2b4041989?w=950&h=566&f=png&s=47160)
+
+#### 5、我的问答 MyTopicsActivity
+继承了BasicListActivity，一个简单的列表页面。需要注意的是 调用forum/search接口时 courseId，periodId需要为null
+```
+ ForumSearchRequest request = new ForumSearchRequest(mCurrentPageIndex);
+        request.setSchoolId(schoolId);
+        request.setClassId(getIntent().getIntExtra(ParameterConstant.CLASS_ID, -1));
+        request.setAuthorId(UserInfoRepository.getInstance().getUserId());
+        request.setCourseId(null);
+        request.setPeriodId(null);
+        request.setPageSize(Constant.COURSE_PAGE_SIZE);
+```
+
+# 成绩
+
+## 一、功能描述
+成绩功能主要是用于展示，计算的功能放在了server端。客户端将学习记录上传server，server会有离线任务计算学生的成绩。
+
+## 用例图
+![](https://user-gold-cdn.xitu.io/2019/9/10/16d18deeb063d846?w=520&h=291&f=png&s=20889)
+
+
+## 二、功能界面
+### 单门课程成绩 CourseModuleActivity
+![](https://user-gold-cdn.xitu.io/2019/9/10/16d18f4dabafd842?w=270&h=562&f=png&s=120298)
+
+### 我的成绩 MyCourseScoreActivity
+
+![](https://user-gold-cdn.xitu.io/2019/9/10/16d18faa3befaae6?w=315&h=642&f=png&s=114953)
+
+## 三、页面详解 
+
+### 单门课程成绩 CourseModuleActivity
+![](https://user-gold-cdn.xitu.io/2019/9/10/16d18f5afe453315?w=464&h=511&f=png&s=25296)
+
+```
+    private void initHeadData() {
+        if(courseScore!=null) {
+            otherScoreContainer.setVisibility(courseScore.hasOtherScore() ? View.VISIBLE : View.GONE);
+            moduleScoreContainer.setBackgroundResource(courseScore.hasOtherScore() ? R.drawable.course_score_other_bg : R.drawable.course_score_bg);
+
+            totalScore.setText(getString(R.string.exam_score, String.valueOf(courseScore.getFinalScore())));
+            usuallyScore.setText(getString(R.string.exam_score, String.valueOf(courseScore.getTotalUsualScore())));
+            termScore.setText(getString(R.string.exam_score, String.valueOf(courseScore.getExamScore())));
+            otherScore.setText(getString(R.string.exam_score, String.valueOf(courseScore.getTotalOtherScore())));
+
+            usuallyRang.setText(String.format(getResources().getString(R.string.usually_score), courseScore.getFinalScoreRule().getUsualscorePercent() + "%"));
+            termRang.setText(String.format(getResources().getString(R.string.term_end_score), courseScore.getFinalScoreRule().getExamscorePercent() + "%"));
+            otherRang.setText(String.format(getResources().getString(R.string.other_score), courseScore.getFinalScoreRule().getOtherscorePercent() + "%"));
+
+            RotateAnimation(totalRing, (float) (3.6 * courseScore.getFinalScore()));
+            RotateAnimation(usuallyRing, (float) (3.6 * courseScore.getTotalUsualScore()));
+            RotateAnimation(termRing, (float) (3.6 * courseScore.getExamScore()));
+            RotateAnimation(otherRing, (float) (3.6 * courseScore.getTotalOtherScore()));
+        }
+    }
+```
+
+### 我的成绩  MyCourseScoreActivity
+功能需求：按学期展示成绩
+
+**类图**
+![](https://user-gold-cdn.xitu.io/2019/9/10/16d1909050cda1d2?w=855&h=442&f=png&s=29620)
+
+**加载时序图**
+
+![](https://user-gold-cdn.xitu.io/2019/9/10/16d191e204e00f33?w=848&h=578&f=png&s=46111)
+
